@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogControl.Api", "CatalogControl\CatalogControl.Api.csproj", "{122370C1-0948-4C13-97D0-0462A21A369D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogControl.Api", "CatalogControl.Api\CatalogControl.Api.csproj", "{122370C1-0948-4C13-97D0-0462A21A369D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogControl.Application", "CatalogControl.Application\CatalogControl.Application.csproj", "{69E102A2-7CAA-4758-A799-FDA95B0659CA}"
 EndProject

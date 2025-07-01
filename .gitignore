@@ -1,3 +1,5 @@
 .vs/
 obj/
 docker-compose.yml
+
+[Dd]ebug/
