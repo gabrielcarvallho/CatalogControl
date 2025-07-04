@@ -1,6 +1,7 @@
 ﻿using CatalogControl.Domain.Entities;
 using CatalogControl.Domain.Repositories;
 using CatalogControl.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CatalogControl.Infrastructure.Repositories
 {
-    internal class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly AppDbContext _context;
 
@@ -18,34 +19,44 @@ namespace CatalogControl.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<Category> GetByIdAsync(int id)
+        public async Task<Category?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Categories.
+                Include(c => c.Products).
+                ToListAsync();
         }
 
-        public Task<Category> CreateAsync(Category category)
+        public async Task<Category> CreateAsync(Category category)
         {
-            throw new NotImplementedException();
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+
+            return category;
         }
 
-        public Task<Category> UpdateAsync(Category category)
+        public async Task<Category> UpdateAsync(Category category)
         {
-            throw new NotImplementedException();
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+
+            return category;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> ExistsAsync(int id)
-        {
-            throw new NotImplementedException();
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
+            {
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

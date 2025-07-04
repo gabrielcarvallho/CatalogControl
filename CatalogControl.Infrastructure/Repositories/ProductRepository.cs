@@ -1,5 +1,7 @@
 ﻿using CatalogControl.Domain.Entities;
 using CatalogControl.Domain.Repositories;
+using CatalogControl.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +12,50 @@ namespace CatalogControl.Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<Product> GetByIdAsync(int id)
+        private readonly AppDbContext _context;
+
+        public ProductRepository(AppDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<Product?> GetByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Task<IEnumerable<Product>> GetAllAsync()
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Products
+                .Include(p => p.Category)
+                .ToListAsync();
         }
 
-        public Task<Product> CreateAsync(Product product)
+        public async Task<Product> CreateAsync(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return product;
         }
 
-        public Task<Product> UpdateAsync(Product product)
+        public async Task<Product> UpdateAsync(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return product;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> ExistsAsync(int id)
-        {
-            throw new NotImplementedException();
+            var product = await _context.Products.FindAsync(id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
