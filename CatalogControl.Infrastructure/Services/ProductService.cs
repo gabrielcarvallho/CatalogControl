@@ -1,37 +1,69 @@
-﻿using CatalogControl.Domain.Entities;
+﻿using AutoMapper;
+using CatalogControl.Application.DTOs;
+using CatalogControl.Domain.Entities;
 using CatalogControl.Domain.Interfaces.Services;
+using CatalogControl.Domain.Repositories;
 
 namespace CatalogControl.Infrastructure.Services;
 
 public class ProductService : IProductService
 {
-    public Task<Product> CreateAsync(Product product)
+    private readonly IProductRepository _productRepository;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IMapper _mapper;
+
+    public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
     {
-        throw new NotImplementedException();
+        _productRepository = productRepository;
+        _categoryRepository = categoryRepository;
+        _mapper = mapper;
     }
 
-    public Task<Product> DeleteAsync(Guid id)
+    public async Task<ProductResponseDto?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var product = await _productRepository.GetByIdAsync(id);
+        return product == null ? null : _mapper.Map<ProductResponseDto>(product);
     }
 
-    public Task<bool> ExistsAsync(Guid id)
+    public async Task<IEnumerable<ProductResponseDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var categories = await _productRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<ProductResponseDto>>(categories);
     }
 
-    public Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<ProductResponseDto?> CreateAsync(ProductRequestDto productDto)
     {
-        throw new NotImplementedException();
+        if (!await _categoryRepository.ExistsAsync(productDto.CategoryId))
+            throw new ArgumentException("Category not found");
+
+        var product = _mapper.Map<Product>(productDto);
+        var createdProduct = await _productRepository.CreateAsync(product);
+
+        return _mapper.Map<ProductResponseDto>(product);
+
     }
 
-    public Task<Product?> GetByIdAsync(Guid id)
+    public async Task<ProductResponseDto?> UpdateAsync(Guid id, ProductRequestDto productDto)
     {
-        throw new NotImplementedException();
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null)
+            return null;
+
+        if (!await _categoryRepository.ExistsAsync(productDto.CategoryId))
+            throw new ArgumentException("Category not found");
+
+        _mapper.Map(productDto, product);
+
+        var updatedProduct = await _productRepository.UpdateAsync(product);
+        return _mapper.Map<ProductResponseDto>(updatedProduct);
     }
 
-    public Task<Product> UpdateAsync(Product product)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (!await _productRepository.ExistsAsync(id))
+            return false;
+
+        await _productRepository.DeleteAsync(id);
+        return true;
     }
 }

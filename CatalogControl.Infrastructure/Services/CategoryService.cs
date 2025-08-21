@@ -1,37 +1,60 @@
-﻿using CatalogControl.Domain.Entities;
-using CatalogControl.Domain.Interfaces.Services;
+﻿using AutoMapper;
+using CatalogControl.Application.DTOs;
+using CatalogControl.Application.Services;
+using CatalogControl.Domain.Entities;
+using CatalogControl.Domain.Repositories;
 
 namespace CatalogControl.Infrastructure.Services;
 
 public class CategoryService : ICategoryService
 {
-    public Task<Category> CreateAsync(Category category)
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IMapper _mapper;
+
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
-        throw new NotImplementedException();
+        _categoryRepository = categoryRepository;
+        _mapper = mapper;
     }
 
-    public Task<Category> DeleteAsync(Guid id)
+    public async Task<CategoryResponseDto?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var category = await _categoryRepository.GetByIdAsync(id);
+        return category == null ? null : _mapper.Map<CategoryResponseDto>(category);
     }
 
-    public Task<bool> ExistsAsync(Guid id)
+    public async Task<IEnumerable<CategoryResponseDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var categories = await _categoryRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
     }
 
-    public Task<IEnumerable<Category>> GetAllAsync()
+    public async Task<CategoryResponseDto> CreateAsync(CategoryRequestDto categoryDto)
     {
-        throw new NotImplementedException();
+        var category = _mapper.Map<Category>(categoryDto);
+        var createdCategory = await _categoryRepository.CreateAsync(category);
+
+        return _mapper.Map<CategoryResponseDto>(createdCategory);
     }
 
-    public Task<Category?> GetByIdAsync(Guid id)
+    public async Task<CategoryResponseDto?> UpdateAsync(Guid id, CategoryRequestDto categoryDto)
     {
-        throw new NotImplementedException();
+        var category = await _categoryRepository.GetByIdAsync(id);
+        if (category == null)
+            return null;
+
+        _mapper.Map(categoryDto, category);
+
+        var updatedCategory = await _categoryRepository.UpdateAsync(category);
+        return _mapper.Map<CategoryResponseDto>(updatedCategory);
     }
 
-    public Task<Category> UpdateAsync(Category category)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (!await _categoryRepository.ExistsAsync(id))
+            return false;
+
+        await _categoryRepository.DeleteAsync(id);
+        return true;
     }
 }

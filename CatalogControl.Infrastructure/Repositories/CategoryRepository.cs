@@ -1,5 +1,5 @@
 ﻿using CatalogControl.Domain.Entities;
-using CatalogControl.Domain.Interfaces.Repositories;
+using CatalogControl.Domain.Repositories;
 using CatalogControl.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

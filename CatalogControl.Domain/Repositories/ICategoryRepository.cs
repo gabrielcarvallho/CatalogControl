@@ -1,6 +1,6 @@
 ﻿using CatalogControl.Domain.Entities;
 
-namespace CatalogControl.Domain.Interfaces.Repositories;
+namespace CatalogControl.Domain.Repositories;
 
 public interface ICategoryRepository
 {
