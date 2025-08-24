@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CatalogControl.Application\CatalogControl.Application.csproj" />
     <ProjectReference Include="..\CatalogControl.Domain\CatalogControl.Domain.csproj" />
     <ProjectReference Include="..\CatalogControl.Infrastructure\CatalogControl.Infrastructure.csproj" />

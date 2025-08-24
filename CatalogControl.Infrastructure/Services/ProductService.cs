@@ -53,6 +53,7 @@ public class ProductService : IProductService
             throw new ArgumentException("Category not found");
 
         _mapper.Map(productDto, product);
+        product.UpdatedAt = DateTime.UtcNow;
 
         var updatedProduct = await _productRepository.UpdateAsync(product);
         return _mapper.Map<ProductResponseDto>(updatedProduct);

@@ -8,9 +8,11 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Category, CategoryRequestDto>();
-        CreateMap<Product, ProductRequestDto>();
+        // DTO -> Entity
+        CreateMap<CategoryRequestDto, Category>();
+        CreateMap<ProductRequestDto, Product>();
 
+        // Entity -> DTO
         CreateMap<Category, CategoryResponseDto>()
             .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));
 

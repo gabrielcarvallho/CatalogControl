@@ -44,6 +44,7 @@ public class CategoryService : ICategoryService
             return null;
 
         _mapper.Map(categoryDto, category);
+        category.UpdatedAt = DateTime.UtcNow;
 
         var updatedCategory = await _categoryRepository.UpdateAsync(category);
         return _mapper.Map<CategoryResponseDto>(updatedCategory);

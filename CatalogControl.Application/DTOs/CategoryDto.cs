@@ -12,5 +12,4 @@ public class CategoryResponseDto
     public ICollection<ProductResponseDto> Products { get; set; } = new List<ProductResponseDto>();
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-
 }
